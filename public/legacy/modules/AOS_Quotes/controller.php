@@ -105,4 +105,76 @@ class AOS_QuotesController extends SugarController
             }
         }
     }
+
+    /**
+     * Action to check if another quote already has "Closed Accepted" stage
+     * Returns JSON: {"exists": true/false, "count": number}
+     */
+    public function action_CheckFinalQuote()
+    {
+        $opportunityId = isset($_REQUEST['opportunity_id']) ? $_REQUEST['opportunity_id'] : '';
+        $currentQuoteId = isset($_REQUEST['current_quote_id']) ? $_REQUEST['current_quote_id'] : '';
+        
+        header('Content-Type: application/json');
+        
+        if (empty($opportunityId)) {
+            echo json_encode(array('exists' => false, 'count' => 0));
+            exit();
+        }
+        
+        global $db;
+        
+        $finalStage = 'Closed Accepted';
+        $opportunityIdQuoted = $db->quoted($opportunityId);
+        $currentQuoteIdQuoted = !empty($currentQuoteId) ? $db->quoted($currentQuoteId) : "''";
+        $finalStageQuoted = $db->quoted($finalStage);
+        
+        // Count all quotes with "Closed Accepted" stage for this opportunity (excluding current quote)
+        $query = "SELECT COUNT(*) as count 
+                  FROM aos_quotes 
+                  WHERE opportunity_id = {$opportunityIdQuoted} 
+                    AND id != {$currentQuoteIdQuoted}
+                    AND stage = {$finalStageQuoted}
+                    AND deleted = 0";
+        
+        $result = $db->query($query);
+        $row = $db->fetchByAssoc($result);
+        
+        $count = isset($row['count']) ? (int)$row['count'] : 0;
+        $exists = $count > 0;
+        
+        // If we're setting the current quote to "Closed Accepted", add 1 to the count
+        // This gives us the total count that would exist after saving
+        $totalCount = $count + 1;
+        
+        echo json_encode(array('exists' => $exists, 'count' => $count, 'totalCount' => $totalCount));
+        exit();
+    }
+
+    /**
+     * Action to check if opportunity is "Closed Won"
+     * Returns JSON: {"isClosedWon": true/false}
+     */
+    public function action_CheckOpportunityStatus()
+    {
+        $opportunityId = isset($_REQUEST['opportunity_id']) ? $_REQUEST['opportunity_id'] : '';
+        
+        header('Content-Type: application/json');
+        
+        if (empty($opportunityId)) {
+            echo json_encode(array('isClosedWon' => false));
+            exit();
+        }
+        
+        $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
+        $isClosedWon = false;
+        
+        if ($opportunity && !empty($opportunity->sales_stage) && 
+            $opportunity->sales_stage === 'Closed Won') {
+            $isClosedWon = true;
+        }
+        
+        echo json_encode(array('isClosedWon' => $isClosedWon));
+        exit();
+    }
 }

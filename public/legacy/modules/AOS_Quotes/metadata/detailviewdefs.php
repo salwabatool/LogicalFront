@@ -7,6 +7,13 @@ array(
   array(
     'templateMeta' =>
     array(
+      'includes' =>
+      array(
+        0 =>
+        array(
+          'file' => 'custom/modules/AOS_Quotes/javascript/validate_final_quote.js',
+        ),
+      ),
       'form' =>
       array(
         'buttons' =>

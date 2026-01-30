@@ -1,0 +1,22 @@
+<?php
+$dictionary['Opportunity']['fields']['calculated_profit'] = array(
+    'inline_edit' => '0',
+    'required' => false,
+    'name' => 'calculated_profit',
+    'vname' => 'LBL_CALCULATED_PROFIT',
+    'type' => 'varchar',
+    'massupdate' => '0',
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => '100',
+    'size' => '20',
+);
