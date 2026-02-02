@@ -10,6 +10,7 @@ $dictionary['Opportunity']['fields']['calculated_profit'] = array(
     'no_default' => false,
     'comments' => '',
     'help' => '',
+    'readonly' => true,
     'importable' => 'true',
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
