@@ -6,6 +6,155 @@
     'use strict';
     
     var finalStage = 'Closed Accepted';
+    var intervals = []; // Store all interval IDs for cleanup
+    var timeouts = []; // Store all timeout IDs for cleanup
+    var isInitialized = false; // Prevent multiple initializations
+    var validationFailed = false; // Track if validation has failed
+    var validationInitDone = false; // Track if validation initialization is done
+    var hideButtonInitDone = false; // Track if hide button initialization is done
+    var currentModal = null; // Track current modal instance
+    var initialStageValue = null; // Store initial stage value to avoid checking form changes
+    
+    /**
+     * Show error message in a modal dialog
+     * @param {string} message - The error message to display
+     * @param {function} onClose - Optional callback when modal is closed
+     */
+    function showErrorModal(message, onClose) {
+        // Remove existing modal if present
+        if (currentModal) {
+            var existingModal = document.getElementById('quote-validation-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            var existingBackdrop = document.querySelector('.quote-validation-modal-backdrop');
+            if (existingBackdrop) {
+                existingBackdrop.remove();
+            }
+        }
+        
+        // Create backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'quote-validation-modal-backdrop';
+        backdrop.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1040;';
+        document.body.appendChild(backdrop);
+        
+        // Create modal container
+        var modal = document.createElement('div');
+        modal.id = 'quote-validation-modal';
+        modal.className = 'quote-validation-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-labelledby', 'quote-validation-modal-title');
+        modal.setAttribute('aria-modal', 'true');
+        modal.style.cssText = 'position: fixed; top: 7%; left: 0; width: 100%; height: 100%; z-index: 1050; display: flex; justify-content: center;';
+        
+        // Create modal dialog
+        var modalDialog = document.createElement('div');
+        modalDialog.className = 'quote-validation-modal-dialog';
+        modalDialog.style.cssText = 'position: relative; width: 90%; max-width: 500px; margin: 1.75rem auto;';
+        
+        // Create modal content
+        var modalContent = document.createElement('div');
+        modalContent.className = 'quote-validation-modal-content';
+        modalContent.style.cssText = 'position: relative; display: flex; flex-direction: column; width: 100%; background-color: #fff; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 0.3rem; box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);';
+        
+        // Create modal header
+        var modalHeader = document.createElement('div');
+        modalHeader.className = 'quote-validation-modal-header';
+        modalHeader.style.cssText = 'display: flex; align-items: flex-start; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #dee2e6; border-top-left-radius: 0.3rem; border-top-right-radius: 0.3rem; background-color: #f8d7da;';
+        
+        var modalTitle = document.createElement('h5');
+        modalTitle.id = 'quote-validation-modal-title';
+        modalTitle.className = 'quote-validation-modal-title';
+        modalTitle.textContent = 'Error';
+        modalTitle.style.cssText = 'margin: 0; font-size: 1.25rem; font-weight: 500; color: #721c24;';
+        modalHeader.appendChild(modalTitle);
+        
+        var closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.className = 'quote-validation-modal-close';
+        closeButton.setAttribute('aria-label', 'Close');
+        closeButton.innerHTML = '&times;';
+        closeButton.style.cssText = 'padding: 1rem; margin: -1rem -1rem -1rem auto; background-color: transparent; border: 0; font-size: 1.5rem; font-weight: 700; line-height: 1; color: #721c24; opacity: 0.5; cursor: pointer;';
+        closeButton.onclick = function() {
+            closeErrorModal();
+            if (onClose) onClose();
+        };
+        modalHeader.appendChild(closeButton);
+        
+        // Create modal body
+        var modalBody = document.createElement('div');
+        modalBody.className = 'quote-validation-modal-body';
+        modalBody.style.cssText = 'position: relative; flex: 1 1 auto; padding: 1rem; color: #721c24;';
+        modalBody.textContent = message;
+        
+        // Create modal footer
+        var modalFooter = document.createElement('div');
+        modalFooter.className = 'quote-validation-modal-footer';
+        modalFooter.style.cssText = 'display: flex; align-items: center; justify-content: flex-end; padding: 1rem; border-top: 1px solid #dee2e6; border-bottom-right-radius: 0.3rem; border-bottom-left-radius: 0.3rem;';
+        
+        var okButton = document.createElement('button');
+        okButton.type = 'button';
+        okButton.className = 'quote-validation-modal-ok btn btn-primary';
+        okButton.textContent = 'OK';
+        okButton.style.cssText = 'padding: 0.375rem 0.75rem; font-size: 1rem; line-height: 1.5; border-radius: 0.25rem; border: 1px solid #007bff; background-color: #007bff; color: #fff; cursor: pointer;';
+        okButton.onclick = function() {
+            closeErrorModal();
+            if (onClose) onClose();
+        };
+        modalFooter.appendChild(okButton);
+        
+        // Assemble modal
+        modalContent.appendChild(modalHeader);
+        modalContent.appendChild(modalBody);
+        modalContent.appendChild(modalFooter);
+        modalDialog.appendChild(modalContent);
+        modal.appendChild(modalDialog);
+        document.body.appendChild(modal);
+        
+        currentModal = modal;
+        
+        // Close on backdrop click
+        backdrop.onclick = function(e) {
+            if (e.target === backdrop) {
+                closeErrorModal();
+                if (onClose) onClose();
+            }
+        };
+        
+        // Close on Escape key
+        var escapeHandler = function(e) {
+            if (e.key === 'Escape' && currentModal) {
+                closeErrorModal();
+                if (onClose) onClose();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+        
+        // Focus the OK button
+        setTimeout(function() {
+            okButton.focus();
+        }, 100);
+    }
+    
+    /**
+     * Close the error modal
+     */
+    function closeErrorModal() {
+        if (currentModal) {
+            currentModal.remove();
+            currentModal = null;
+        }
+        var backdrop = document.querySelector('.quote-validation-modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+        // Remove modal-open class from body if no other modals
+        if (document.querySelectorAll('.quote-validation-modal').length === 0) {
+            document.body.classList.remove('modal-open');
+        }
+    }
     
     /**
      * Check if another quote already has "Closed Accepted" stage (synchronous AJAX)
@@ -48,9 +197,10 @@
     
     /**
      * Check if opportunity is Closed Won (synchronous AJAX)
+     * Returns false if validation has failed to prevent further calls
      */
     function checkOpportunityClosedWon(opportunityId) {
-        if (!opportunityId) {
+        if (!opportunityId || validationFailed) {
             return false;
         }
         
@@ -115,11 +265,14 @@
         // If it's a final quote and opportunity is Closed Won, prevent editing
         if (isFinalQuote && opportunityId) {
             if (checkOpportunityClosedWon(opportunityId)) {
+                validationFailed = true;
+                clearAllIntervals();
                 var errorMsg = "This quote cannot be edited because the related Opportunity is 'Closed Won'.";
-                alert(errorMsg);
-                setTimeout(function() {
-                    window.history.back();
-                }, 100);
+                showErrorModal(errorMsg, function() {
+                    setTimeout(function() {
+                        window.history.back();
+                    }, 100);
+                });
                 return false;
             }
         }
@@ -128,8 +281,10 @@
         if (stageValue === finalStage && opportunityId) {
             var checkResult = checkExistingFinalQuote(opportunityId, currentQuoteId);
             if (checkResult.exists) {
+                validationFailed = true;
+                clearAllIntervals();
                 var errorMsg = "Exactly 1 quote must be set to final. Currently " + (checkResult.totalCount - 1) + " quotes are set as final.";
-                alert(errorMsg);
+                showErrorModal(errorMsg);
                 return false;
             }
         }
@@ -139,6 +294,8 @@
     
     /**
      * Check and prevent edit view from loading if opportunity is Closed Won
+     * This only checks the INITIAL saved value, not current form values
+     * Validation of form changes happens only on save button click
      */
     function preventEditViewIfClosedWon() {
         var isEditView = window.location.href.indexOf('/edit/') > -1 || 
@@ -167,13 +324,29 @@
             return;
         }
         
+        // Only check the INITIAL stage value (from when page loaded)
+        // Don't check current dropdown value - that validation happens on save button click
         var stageValue = '';
         var stageField = document.querySelector('[name="stage"]') || document.getElementById('stage');
-        if (stageField) {
+        
+        // Use stored initial value if available, otherwise get it once and store it
+        if (initialStageValue !== null) {
+            stageValue = initialStageValue;
+        } else if (stageField) {
+            // Get initial value once when page loads
             if (stageField.value !== undefined) {
                 stageValue = stageField.value;
             } else if (stageField.options && stageField.selectedIndex >= 0) {
                 stageValue = stageField.options[stageField.selectedIndex].value;
+            }
+            // Store initial value so we don't check form changes
+            initialStageValue = stageValue;
+            
+            // Mark field so we know when user changes it
+            if (stageField.addEventListener) {
+                stageField.addEventListener('change', function() {
+                    stageField.setAttribute('data-user-changed', 'true');
+                }, { once: true });
             }
         }
         
@@ -183,9 +356,14 @@
             return;
         }
         
-        if (checkOpportunityClosedWon(opportunityId)) {
-            alert("This quote cannot be edited because the related Opportunity is 'Closed Won'.");
-            window.history.back();
+        // Only make API call for initial check (quote already has Closed Accepted when page loads)
+        // Don't make API calls when user changes the field - validation happens on save
+        if (initialStageValue === finalStage && (!stageField || stageField.getAttribute('data-user-changed') !== 'true')) {
+            if (checkOpportunityClosedWon(opportunityId)) {
+                showErrorModal("This quote cannot be edited because the related Opportunity is 'Closed Won'.", function() {
+                    window.history.back();
+                });
+            }
         }
     }
     
@@ -273,8 +451,23 @@
     
     /**
      * Prevent inline editing if opportunity is Closed Won
+     * This only runs on detail view, not edit view
      */
     function preventInlineEditing() {
+        // Don't run if validation has failed
+        if (validationFailed) {
+            return;
+        }
+        
+        // Only run on detail view, not edit view (to avoid API calls when user changes fields)
+        var isEditView = window.location.href.indexOf('/edit/') > -1 || 
+                        window.location.href.indexOf('action=EditView') > -1 ||
+                        document.querySelector('#EditView') ||
+                        document.querySelector('form[name="EditView"]');
+        if (isEditView) {
+            return; // Don't run in edit view - validation happens on save
+        }
+        
         var opportunityId = '';
         var oppField = document.querySelector('[name="opportunity_id"]') || 
                        document.getElementById('opportunity_id') ||
@@ -335,7 +528,7 @@
                     editableFields[i].addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        alert("This quote cannot be edited because the related Opportunity is 'Closed Won'.");
+                        showErrorModal("This quote cannot be edited because the related Opportunity is 'Closed Won'.");
                         return false;
                     }, true);
                 }
@@ -347,6 +540,11 @@
      * Check if opportunity is Closed Won and hide edit button if quote is final
      */
     function checkAndHideEditButton() {
+        // Don't run if validation has failed
+        if (validationFailed) {
+            return;
+        }
+        
         var isDetailView = window.location.href.indexOf('/detail/') > -1 || 
                           window.location.href.indexOf('action=DetailView') > -1 ||
                           document.querySelector('.detail-view');
@@ -437,9 +635,30 @@
     }
     
     /**
+     * Clear all intervals and timeouts
+     */
+    function clearAllIntervals() {
+        for (var i = 0; i < intervals.length; i++) {
+            clearInterval(intervals[i]);
+        }
+        intervals = [];
+        
+        for (var j = 0; j < timeouts.length; j++) {
+            clearTimeout(timeouts[j]);
+        }
+        timeouts = [];
+    }
+    
+    /**
      * Initialize validation
      */
     function initValidation() {
+        // Prevent multiple initializations
+        if (validationInitDone || validationFailed) {
+            return;
+        }
+        validationInitDone = true;
+        
         preventEditViewIfClosedWon();
         
         var attempts = 0;
@@ -447,40 +666,94 @@
         
         var checkForm = setInterval(function() {
             attempts++;
-            if (attachValidation() || attempts >= maxAttempts) {
+            if (attachValidation() || attempts >= maxAttempts || validationFailed) {
                 clearInterval(checkForm);
             }
         }, 100);
+        intervals.push(checkForm);
         
-        setTimeout(checkAndHideEditButton, 1000);
-        setTimeout(preventInlineEditing, 1500);
+        var timeout1 = setTimeout(function() {
+            if (!validationFailed) {
+                checkAndHideEditButton();
+            }
+        }, 1000);
+        timeouts.push(timeout1);
+        
+        var timeout2 = setTimeout(function() {
+            if (!validationFailed) {
+                preventInlineEditing();
+            }
+        }, 1500);
+        timeouts.push(timeout2);
     }
     
     function initHideEditButton() {
-        checkAndHideEditButton();
-        setTimeout(checkAndHideEditButton, 2000);
-        preventInlineEditing();
-        setTimeout(preventInlineEditing, 2000);
+        // Prevent multiple initializations
+        if (hideButtonInitDone || validationFailed) {
+            return;
+        }
+        hideButtonInitDone = true;
+        
+        if (!validationFailed) {
+            checkAndHideEditButton();
+        }
+        
+        var timeout1 = setTimeout(function() {
+            if (!validationFailed) {
+                checkAndHideEditButton();
+            }
+        }, 2000);
+        timeouts.push(timeout1);
+        
+        if (!validationFailed) {
+            preventInlineEditing();
+        }
+        
+        var timeout2 = setTimeout(function() {
+            if (!validationFailed) {
+                preventInlineEditing();
+            }
+        }, 2000);
+        timeouts.push(timeout2);
     }
     
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
+    // Main initialization - only run once
+    function initialize() {
+        if (isInitialized) {
+            return;
+        }
+        isInitialized = true;
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                initValidation();
+                initHideEditButton();
+            });
+        } else {
+            var timeout1 = setTimeout(function() {
+                initValidation();
+                initHideEditButton();
+            }, 500);
+            timeouts.push(timeout1);
+        }
+        
+        var timeout2 = setTimeout(function() {
             initValidation();
             initHideEditButton();
-        });
-    } else {
-        setTimeout(function() {
-            initValidation();
-            initHideEditButton();
-        }, 500);
+        }, 2000);
+        timeouts.push(timeout2);
+        
+        // Only set up the interval if we're not in a failed state
+        // Run it less frequently and with a check
+        var preventInlineInterval = setInterval(function() {
+            if (!validationFailed) {
+                preventInlineEditing();
+            } else {
+                clearInterval(preventInlineInterval);
+            }
+        }, 5000); // Increased from 3000 to 5000 to reduce frequency
+        intervals.push(preventInlineInterval);
     }
     
-    setTimeout(function() {
-        initValidation();
-        initHideEditButton();
-    }, 2000);
-    
-    setInterval(function() {
-        preventInlineEditing();
-    }, 3000);
+    initialize();
 })();
