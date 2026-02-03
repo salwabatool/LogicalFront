@@ -60,8 +60,10 @@ class AOS_QuotesCalculateProfit
         // round to 2 decimal places
         $total_profit = round($total_profit, 2);
         
-        $oppo_bean->calculated_profit = $total_profit;
-        $oppo_bean->save();
+        // $oppo_bean->calculated_profit = $total_profit;
+        // $oppo_bean->save();
+        $queryf = "UPDATE opportunities SET calculated_profit = '{$total_profit}' WHERE id = '{$oppo_id}'";
+        $db->query($queryf);
         
     }
 }
