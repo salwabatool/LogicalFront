@@ -267,7 +267,7 @@
             if (checkOpportunityClosedWon(opportunityId)) {
                 validationFailed = true;
                 clearAllIntervals();
-                var errorMsg = "This quote cannot be edited because the related Opportunity is 'Closed Won'.";
+                var errorMsg = "Only one quote can be Final per opportunity.";
                 showErrorModal(errorMsg, function() {
                     setTimeout(function() {
                         window.history.back();
@@ -283,7 +283,7 @@
             if (checkResult.exists) {
                 validationFailed = true;
                 clearAllIntervals();
-                var errorMsg = "Exactly 1 quote must be set to final. Currently " + (checkResult.totalCount - 1) + " quotes are set as final.";
+                var errorMsg = "Only one quote can be Final per opportunity.";
                 showErrorModal(errorMsg);
                 return false;
             }
@@ -360,7 +360,7 @@
         // Don't make API calls when user changes the field - validation happens on save
         if (initialStageValue === finalStage && (!stageField || stageField.getAttribute('data-user-changed') !== 'true')) {
             if (checkOpportunityClosedWon(opportunityId)) {
-                showErrorModal("This quote cannot be edited because the related Opportunity is 'Closed Won'.", function() {
+                showErrorModal("Only one quote can be Final per opportunity.", function() {
                     window.history.back();
                 });
             }
@@ -528,7 +528,7 @@
                     editableFields[i].addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        showErrorModal("This quote cannot be edited because the related Opportunity is 'Closed Won'.");
+                        showErrorModal("Only one quote can be Final per opportunity.");
                         return false;
                     }, true);
                 }
