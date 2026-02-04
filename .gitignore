@@ -20,7 +20,7 @@
 /.angular/
 /dist/
 # === Core Application (Angular + Symfony) ===
-/core/
+#/core/
 # === Zend Framework (Legacy Library) ===
 /public/legacy/Zend/
 
