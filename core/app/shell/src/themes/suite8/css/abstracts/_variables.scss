@@ -1,0 +1,228 @@
+/**
+ * SuiteCRM is a customer relationship management program developed by SalesAgility Ltd.
+ * Copyright (C) 2021 SalesAgility Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY SALESAGILITY, SALESAGILITY DISCLAIMS THE
+ * WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License
+ * version 3, these Appropriate Legal Notices must retain the display of the
+ * "Supercharged by SuiteCRM" logo. If the display of the logos is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Supercharged by SuiteCRM".
+ */
+
+/* --------- VARIABLES SECTION ---------- */
+
+
+ /* Logical Front Primary Colors */
+ $lf-primary: #125EAD;
+ $lf-secondary: #4BB74E;
+ $lf-primary-light: #4A90E2;
+ $lf-primary-dark: #0A3D6B;
+ $lf-secondary-light: #7BC97B;
+ $lf-secondary-dark: #2F7D32;
+ 
+ /* Microsoft Dynamics Gray Scale */
+ $dynamics-gray-50: #faf9f8;
+ $dynamics-gray-100: #f3f2f1;
+ $dynamics-gray-200: #edebe9;
+ $dynamics-gray-300: #e1dfdd;
+ $dynamics-gray-400: #d2d0ce;
+ $dynamics-gray-500: #a19f9d;
+ $dynamics-gray-600: #8a8886;
+ $dynamics-gray-700: #605e5c;
+ $dynamics-gray-800: #323130;
+ $dynamics-gray-900: #201f1e;
+ 
+ /* Semantic Colors */
+ $success-color: #4BB74E;
+ $warning-color: #ff8c00;
+ $error-color: #d13438;
+ $info-color: #125EAD;
+ $border-color: $dynamics-gray-200;
+ $hover-bg: $dynamics-gray-50;
+ $active-bg: rgba(18, 94, 173, 0.1);
+
+ 
+ /* Shadows */
+ $shadow-light: 0 2px 4px rgba(0,0,0,0.08);
+ $shadow-medium: 0 4px 8px rgba(0,0,0,0.12);
+ $shadow-heavy: 0 8px 16px rgba(0,0,0,0.16);
+ 
+ /* Typography Scale */
+ $font-size-xs: 11px;
+ $font-size-sm: 13px;
+ $font-size-base: 14px;
+ $font-size-lg: 16px;
+ $font-size-xl: 18px;
+ $font-size-2xl: 24px;
+ $font-size-3xl: 30px;
+ 
+ /* Line Heights */
+ $line-height-tight: 1.25;
+ $line-height-base: 1.5;
+ $line-height-relaxed: 1.75;
+ 
+ /* Font Weights */
+ $font-weight-normal: 400;
+ $font-weight-medium: 500;
+ $font-weight-semibold: 600;
+ $font-weight-bold: 700;
+ 
+ /* Border Radius Scale */
+ $radius-sm: 4px;
+ $radius-md: 6px;
+ $radius-lg: 8px;
+ $radius-xl: 12px;
+ 
+ /* Spacing Scale */
+ $space-xs: 4px;
+ $space-sm: 8px;
+ $space-md: 16px;
+ $space-lg: 24px;
+ $space-xl: 32px;
+ $space-2xl: 48px;
+
+/* --------- COLOURS ---------- */
+
+$white: #ffffff;
+$off-white: #f5f5f5;
+$black: black;
+
+$light-grey: #e9e9e9;
+$median-grey: #333333;
+$dark-midnight-grey: #444444;
+$midnight-grey: #666666;
+$nepal-grey: #93a4b3;
+$shell-grey: #777777;
+$dusty-grey: #778591;
+$smoky-grey: #9794a2;
+$sky-grey: #f9f1e8;
+$bright-grey: #fdedeb;
+$lilac-grey: #cbc9d0;
+$pale-grey: #94a6b5;
+$pebble-grey: #eff2f4;
+$very-light-grey: #ced4da;
+$pale-bue-grey: #9e9ba8;
+$dim-grey: dimgrey;
+$lightgray: lightgray;
+$extra-light-grey: #dee2e6;
+
+$geyser-blue: #d7dde1;
+$cool-blue: #76858f;
+$dusky-blue: #666176;
+$dusky-light-blue: #757083;
+$midnight-blue: #534d64;
+$midnight-blue-faded: #534d648f;
+$midnight-blue-transparent: #534d641f;
+$suite-logo-blue: #4e5063;
+$powdered-blue: #c6d0d8;
+$sky-blue: #a99ac9;
+$astral-blue: #4b7291;
+$pale-blue: #7096b5;
+$bright-blue: #eeebf5;
+
+$burnt-orange: #2F7D32;
+$light-orange: #4A90E2;
+$dull-orange: #4BB74E;
+$bright-orange: #125EAD;
+$vacant-orange: #0A3D6B;
+$lighter-orange: #7BC97B;
+
+$burnt-red: #ef8177;
+$amaranth: #dc3545;
+
+$mellow-yellow: #e2b98e;
+$sandy-yellow: #e3a35f;
+
+$lighter-salmon-pink: #4A90E2;
+$salmon-pink: #4BB74E;
+$coral-pink: #0A3D6B;
+$suite-logo-pink: #0A3D6B;
+
+$bright-purple: #8d74cc;
+
+$wild-willow-green: #c6ca6b;
+$light-green: #93ae8a;
+$dark-green: #667960;
+$very-light-green: #e4f3de;
+
+$very-light-salmon-pink: #f2d4ce;
+$dark-yellow: #f59e5b;
+$light-yellow: #fdf8f1;
+$dark-purple: #be79be;
+$light-purple: #f8f4f8;
+$mild-blue: #8ab2ba;
+$light-blue: #f2f6f7;
+$baby-blue: #80bdff;
+$border-focus-blue:$baby-blue;
+
+
+$thick-green:#83bb73;
+$lighter-green:#f1ffed;
+$thick-orange: #d1c369;
+$very-lighter-orange: #fffbe0;
+
+/* ----Base colors -- */
+
+$danger: #ee8776;
+
+/* ----Buttons -- */
+
+$btn-danger: $danger;
+
+
+/* --------- PREDEFINED STYLES ---------- */
+
+$main: $midnight-blue;
+$main-light: $dusky-light-blue;
+$main-light-hover: $smoky-grey;
+$primary: $cool-blue;
+$secondary: $nepal-grey;
+$complementary: $bright-purple;
+$complementary-light: $sky-blue;
+
+
+/* --------- BREAKPOINTS ---------- */
+
+$breakpoint-xxsmall: 12em;
+$breakpoint-xsmall: 24em;
+$breakpoint-small: 30em;
+$breakpoint-medium: 36em;
+$breakpoint-large: 48em;
+$breakpoint-xlarge: 62em;
+$breakpoint-xxlarge: 75em;
+$breakpoint-xxxlarge: 105em;
+
+/* --------- Z-INDEXES ---------- */
+
+$zindex: (
+  app-high: 2000,
+  app-mid: 1750,
+  app-low: 1510,
+  modal-high: 1500,
+  modal-mid: 1250,
+  modal-low: 1040,
+  nav-max: 1030,
+  nav-high: 1019,
+  nav-mid: 750,
+  nav-low: 500,
+  page-high: 499,
+  page-mid: 50,
+  page-low: 10,
+);
+
+$cross-background-url: "../../images/checkbox_cross.svg"
