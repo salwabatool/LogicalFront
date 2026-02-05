@@ -30,6 +30,7 @@ import {take} from 'rxjs/operators';
 import {RecordActionData, RecordActionHandler} from '../record.action';
 import {MessageService} from '../../../../services/message/message.service';
 import {ModuleNavigation} from '../../../../services/navigation/module-navigation/module-navigation.service';
+import {StateManager} from '../../../../store/state-manager';
 
 @Injectable({
     providedIn: 'root'
@@ -41,7 +42,8 @@ export class RecordSaveNewAction extends RecordActionHandler {
 
     constructor(
         protected message: MessageService,
-        protected navigation: ModuleNavigation
+        protected navigation: ModuleNavigation,
+        protected stateManager: StateManager,
     ) {
         super();
     }
@@ -49,14 +51,28 @@ export class RecordSaveNewAction extends RecordActionHandler {
     run(data: RecordActionData): void {
         data.store.recordStore.validate().pipe(take(1)).subscribe(valid => {
             if (valid) {
-                data.store.save().pipe(take(1)).subscribe(
-                    record => {
+                data.store.save().pipe(take(1)).subscribe({
+                    next: (record) => {
+                        // Check if record is null or invalid (which indicates an error)
+                        if (!record || !record.id) {
+                            this.stateManager.showErrorMessage(true);
+                            // Don't navigate away - preserve form data
+                            return;
+                        }
+                        
+                        // Only navigate if save was successful
                         const store = data.store;
                         const params = store.params;
                         const moduleName = store.getModuleName();
                         this.navigation.navigateBack(record, moduleName, params);
+                    },
+                    error: (error) => {
+                        // Show error message via signal for Opportunities
+                        if (data.store.getModuleName() === 'opportunities') {
+                            this.stateManager.showErrorMessage(true);
+                        }
                     }
-                );
+                });
                 return;
             }
 

@@ -34,12 +34,15 @@ import {UserPreferenceStore} from './user-preference/user-preference.store';
 import {StateStore, StateStoreMap, StateStoreMapEntry} from './state';
 import {MetadataStore} from './metadata/metadata.store.service';
 import {AppMetadataStore} from './app-metadata/app-metadata.store.service';
+import {signal} from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
 })
 export class StateManager {
     protected stateStores: StateStoreMap = {};
+
+    showErrorMessageSignal = signal(false);
 
     constructor(
         protected appStore: AppStateStore,
@@ -106,5 +109,14 @@ export class StateManager {
             store,
             authBased
         };
+    }
+
+    /**
+     * This is a custom method to show error message in the app.component.html
+     * Show error message
+     * @param value 
+     */
+    showErrorMessage(value: boolean) {
+        this.showErrorMessageSignal.set(value);
     }
 }

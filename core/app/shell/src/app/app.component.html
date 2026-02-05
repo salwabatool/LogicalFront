@@ -36,3 +36,8 @@
     <router-outlet></router-outlet>
 </div>
 <scrm-footer-ui></scrm-footer-ui>
+
+<div *ngIf="stateManager.showErrorMessageSignal()" class="cstm-error-message" (click)="stateManager.showErrorMessage(false)">
+    <p>To set as Closed Won, there should be exactly one Final Quote.</p>
+    <span (click)="stateManager.showErrorMessage(false)">×</span>
+</div>

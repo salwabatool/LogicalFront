@@ -128,8 +128,13 @@ export class RecordStore {
 
         return this.recordSaveGQL.save(this.stagingState).pipe(
             tap((record: Record) => {
-                this.initRecord(record);
-                this.updateState(record);
+                // Only update state if record is valid (has an ID)
+                // This prevents the UI from showing detail view when save fails
+                if (record && record.id) {
+                    this.initRecord(record);
+                    this.updateState(record);
+                }
+                // If record is invalid, staging state remains intact (form data preserved)
             })
         );
     }
