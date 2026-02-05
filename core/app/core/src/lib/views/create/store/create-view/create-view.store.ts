@@ -120,12 +120,19 @@ export class CreateViewStore extends RecordViewStore {
         this.appStateStore.updateLoading(`${this.internalState.module}-record-save-new`, true);
 
         return this.recordStore.save().pipe(
+            tap((record: Record) => {
+                // Only change mode to detail if save was successful (record has ID)
+                // This keeps the form in create mode when validation fails
+                if (record && record.id) {
+                    this.setMode('detail' as ViewMode);
+                }
+            }),
             catchError(() => {
                 this.message.addDangerMessageByKey('LBL_ERROR_SAVING');
                 return of({} as Record);
             }),
             finalize(() => {
-                this.setMode('detail' as ViewMode);
+                //this.setMode('detail' as ViewMode);
                 this.appStateStore.updateLoading(`${this.internalState.module}-record-save-new`, false);
             })
         );
