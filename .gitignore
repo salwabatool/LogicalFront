@@ -18,7 +18,7 @@
 /config/
 # === Angular Build ===
 /.angular/
-# /dist/
+/dist/
 # === Core Application (Angular + Symfony) ===
 #/core/
 # === Zend Framework (Legacy Library) ===
@@ -38,7 +38,7 @@
 /symfony.lock
 
 # === Public Build Output ===
-# /public/dist/
+/public/dist/
 /public/bundles/
 /public/extensions/
 
